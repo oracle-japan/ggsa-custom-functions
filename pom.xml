@@ -15,7 +15,7 @@
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
     <osa.version>19.1.0.0.6.1</osa.version>
-    <osa.base>/home/opc/bin/OSA-${osa.version}/osa-base</osa.base>
+    <osa.base>${env.OSA_HOME}/osa-base</osa.base>
   </properties>
 
   <dependencies>
