@@ -8,18 +8,30 @@ Javadocはこちらで参照できます。
 
 ## jarファイルの作り方
 
-ソースからコンパイル/パッケージするには、GoldenGate Stream Analytics のインストール・ディレクトリ配下に存在する osa.spark-cql.extensibility.api.jar が必要で、この中にカスタム・ファンクションが利用するアノテーションが含まれます。という訳で、パッケージ済みのカスタム・ファンクション jar ファイルを直接提供できませんので、ソースから jarファイルを作成してください。
+パッケージ済みのカスタム・ファンクション jar ファイルを直接提供できませんので、ソースから jarファイルを作成してください。  
+ソースからコンパイル/パッケージするには、GoldenGate Stream Analytics のインストール・ディレクトリ配下に存在する `osa.spark-cql.extensibility.api.jar` が必要で、この中にカスタム・ファンクションが利用するアノテーションが含まれます。
 
-1. OSA_HOME 環境変数を設定する
+作成には JDK と Maven が必要です。
 
-    GoldenGate Stream Analytics のインストールディレクトリを指定します。  
+1. ソースをダウンロードする
+    
+    GoldenGate Stream Analytics がインストールされているサーバにダウンロードします。
+    
+    ```
+    $ git clone https://github.com/oracle-japan/ggsa-custom-functions.git
+    $ cd ggsa-custom-functions
+    ```
+
+2. OSA_HOME 環境変数を設定する
+
+    GoldenGate Stream Analytics のインストール・ディレクトリを指定します。  
     (例)
 
     ```bash
     $ export OSA_HOME=/opt/OSA-19.1.0.0.6.1
     ```
 
-2. Mavenを使ってJarファイルを作成する  
+3. Mavenを使ってJarファイルを作成する  
 
     ```bash
     $ mvn package
