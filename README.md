@@ -14,10 +14,10 @@ Javadocはこちらで参照できます。
 作成には JDK と Maven が必要です。
 
 1. ソースをダウンロードする
-    
+
     GoldenGate Stream Analytics がインストールされているサーバにダウンロードします。
-    
-    ```
+
+    ```bash
     $ git clone https://github.com/oracle-japan/ggsa-custom-functions.git
     $ cd ggsa-custom-functions
     ```

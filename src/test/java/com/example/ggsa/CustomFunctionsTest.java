@@ -4,16 +4,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.InputStream;
+import java.time.Instant;
+
+import com.google.gson.JsonObject;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
 
 public class CustomFunctionsTest {
 
-
     @Test
     public void getFromJsonTest() throws Exception{
         String jsonText = null;
+
         try(InputStream in = CustomFunctionsTest.class.getResourceAsStream("/test.json")){
             jsonText = IOUtils.toString(in, "UTF-8");
         }
@@ -80,6 +83,39 @@ public class CustomFunctionsTest {
 
     }
 
+    @Test
+    public void ISO8601Test(){
+        String datetime = "2000-01-01T00:00:00.000Z";
+        long instant = Instant.parse(datetime).toEpochMilli();
+
+        JsonObject json = new JsonObject();
+        json.addProperty("datetime", datetime);
+        json.addProperty("timestamp", instant);
+        String jsonText = json.toString();
+        System.out.println(jsonText);
+
+        String result = CustomFunctions.getISO8601FromJson(jsonText, "timestamp");
+        System.out.println(result);
+        assertEquals("2000-01-01T00:00:00Z", result, "utc");
+
+        result = CustomFunctions.getOffsetISO8601FromJson(jsonText, "timestamp", "+09:00");
+        System.out.println(result);
+        assertEquals("2000-01-01T09:00:00+09:00", result, "+09:00 offset");
+
+        result = CustomFunctions.getZonedISO8601FromJson(jsonText, "timestamp", "JST");
+        System.out.println(result);
+        assertEquals("2000-01-01T09:00:00+09:00[Asia/Tokyo]", result, "zone");
+
+        result = CustomFunctions.getZonedISO8601FromJson(jsonText, "timestamp", "Etc/GMT");
+        System.out.println(result);
+        assertEquals("2000-01-01T00:00:00Z[Etc/GMT]", result, "zone");
+
+        long dt = CustomFunctions.getTimestampFromJson(jsonText, "datetime");
+        System.out.println(dt);
+        assertEquals(instant, dt, "datetime");
+
+
+    }
 
 
 }
