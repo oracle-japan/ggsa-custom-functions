@@ -1,7 +1,11 @@
 package com.example.ggsa;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
@@ -139,16 +143,34 @@ public class CustomFunctions {
     }
 
     /**
-     * json文字列からkeyで指定されたノードの値をtimestamp(long)として返す
+     * 日付文字列をパースしてtimestamp(long)として返す
+     * <br>書式は<a href="https://docs.oracle.com/javase/jp/8/docs/api/java/time/format/DateTimeFormatter.html">Javaドキュメント</a>を参照
+     * 
+     * @param text 日付文字列
+     * @param pattern パースのための DateTimeFormatter 書式、特例として"UTC"を指定するとISO8601オフセット書式でパースする
+     * @return 1970年1月1日からの経過ミリ秒数
+     */
+    @OsaFunction(name = "parseDate", description = "get timestamp(long) from date text")
+    public static long parseDate(String text, String pattern){
+        DateTimeFormatter formatter = pattern.equalsIgnoreCase("UTC") ? 
+                                    ISO8601_OFFSET : DateTimeFormatter.ofPattern(pattern);
+        LocalDateTime ldt = LocalDateTime.parse(text, formatter);
+        return Timestamp.valueOf(ldt).getTime();
+    }
+
+    /**
+     * json文字列からkeyで指定されたノードの値(日付文字列)をパースしてtimestamp(long)として返す
+     * <br>書式は<a href="https://docs.oracle.com/javase/jp/8/docs/api/java/time/format/DateTimeFormatter.html">Javaドキュメント</a>を参照
      * 
      * @param jsonText json文字列
      * @param key /で区切られたノードの位置
+     * @param pattern パースのための DateTimeFormatter 書式、特例として"UTC"を指定するとISO8601オフセット書式でパースする
      * @return 1970年1月1日からの経過ミリ秒数
      */
-    @OsaFunction(name = "getTimestampFromJson", description = "get timestamp(long) from json")
-    public static long getTimestampFromJson(String jsonText, String key){
+    @OsaFunction(name = "parseDateFromJson", description = "get timestamp(long) from json")
+    public static long parseDateFromJson(String jsonText, String key, String pattern){
         JsonElement jsonElement = getJsonElement(jsonText, key);
-        return Instant.parse(jsonElement.getAsString()).toEpochMilli();
+        return parseDate(jsonElement.getAsString(), pattern);
     }
 
     /**
@@ -228,7 +250,7 @@ public class CustomFunctions {
      * @param zoneId ゾーン JST, [Asia/Tokyo] など
      * @return ゾーン形式の日時を表すISO8601書式の文字列
      */
-    @OsaFunction(name = "getZonedISO8601", description = "get zoned ISO8601 string from timestamp(long) json element")
+    @OsaFunction(name = "getZonedISO8601FromJson", description = "get zoned ISO8601 string from timestamp(long) json element")
     public static String getZonedISO8601FromJson(String jsonText, String key, String zoneId){
         JsonElement jsonElement = getJsonElement(jsonText, key);
         return getZonedISO8601(jsonElement.getAsLong(), zoneId);

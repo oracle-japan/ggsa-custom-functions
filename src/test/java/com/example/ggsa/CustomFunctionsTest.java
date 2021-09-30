@@ -84,9 +84,13 @@ public class CustomFunctionsTest {
     }
 
     @Test
-    public void ISO8601Test(){
+    public void ISO8601Test() throws Exception{
         String datetime = "2000-01-01T00:00:00.000Z";
         long instant = Instant.parse(datetime).toEpochMilli();
+
+        assertEquals(instant, CustomFunctions.parseDate("2000-01-01T00:00:00.000Z", "yyyy-MM-dd'T'HH:mm:ss.SSSX"), "parse utc");
+        assertEquals(instant, CustomFunctions.parseDate("2000-01-01T00:00:00.000Z", "UTC"), "parse wtih UTC literal");
+        assertEquals(instant, CustomFunctions.parseDate("2000-01-01 00:00:00", "yyyy-MM-dd HH:mm:ss"), "parse local");
 
         JsonObject json = new JsonObject();
         json.addProperty("datetime", datetime);
@@ -110,7 +114,7 @@ public class CustomFunctionsTest {
         System.out.println(result);
         assertEquals("2000-01-01T00:00:00Z[Etc/GMT]", result, "zone");
 
-        long dt = CustomFunctions.getTimestampFromJson(jsonText, "datetime");
+        long dt = CustomFunctions.parseDateFromJson(jsonText, "datetime", "yyyy-MM-dd'T'HH:mm:ss.SSSX");
         System.out.println(dt);
         assertEquals(instant, dt, "datetime");
 
